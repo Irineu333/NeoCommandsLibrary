@@ -1,5 +1,7 @@
 package neo.commands.fundation;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -76,15 +78,20 @@ public class StreamUtils {
             @Override
             public void run() {
 
-                Utils.Result<String> result = syncReadProcess(process);
+                final Utils.Result<String> result = syncReadProcess(process);
 
-                if (result.isSuccess()) {
-                    assert result.getResult() != null;
-                    callback.success(result.getResult());
-                } else {
-                    assert result.getError() != null;
-                    callback.error(result.getError());
-                }
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (result.isSuccess()) {
+                            assert result.getResult() != null;
+                            callback.success(result.getResult());
+                        } else {
+                            assert result.getError() != null;
+                            callback.error(result.getError());
+                        }
+                    }
+                });
             }
         }).start();
     }
