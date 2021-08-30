@@ -320,7 +320,6 @@ public class AaptUtils {
 
     /**
      * Comando p ou package empacota os arquivos do aplicativo
-     *
      * @author Irineu A. Silva
      */
     public class PACKAGE {

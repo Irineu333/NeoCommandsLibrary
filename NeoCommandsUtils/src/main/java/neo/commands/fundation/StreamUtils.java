@@ -10,11 +10,21 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.io.Writer;
 
+/**
+ * Utilitários de Stream de dados
+ * @author Irineu A. Silva
+ */
 public class StreamUtils {
 
     static int DEFAULT_BUFFER_SIZE = 8 * 1024;
 
-    static public Utils.Result<String> syncReadProcess(Process process) {
+    /**
+     * Ler um processo e retorna o resultado tratado de forma síncrona
+     * @param process processo a ser lido
+     * @return resultado
+     */
+    @NonNull
+    static public Utils.Result<String> syncReadProcess(@NonNull Process process) {
 
         try {
             if (process.waitFor() == 0) {
@@ -40,7 +50,11 @@ public class StreamUtils {
         }
     }
 
-    static public void syncReadProcess(Process process, Utils.Callback<String> callback) {
+    /**
+     * Ler um processo e chama o callback passando o resultado tratado de forma síncrona
+     * @param process processo a ser lido
+     */
+    static public void syncReadProcess(@NonNull Process process, @NonNull Utils.Callback<String> callback) {
 
         Utils.Result<String> result = syncReadProcess(process);
 
@@ -53,7 +67,11 @@ public class StreamUtils {
         }
     }
 
-    static public void asyncReadProcess(final Process process, final Utils.Callback<String> callback) {
+    /**
+     * Ler um processo e chama o callback passando o resultado tratado de forma assíncrona
+     * @param process processo a ser lido
+     */
+    static public void asyncReadProcess(@NonNull final Process process, @NonNull final Utils.Callback<String> callback) {
         new Thread(new Runnable() {
             @Override
             public void run() {

@@ -3,13 +3,27 @@ package neo.commands.fundation;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+/**
+ * Fundação de utilitários
+ * @author Irineu A. Silva
+ */
 public class Utils  {
 
+    /**
+     * Callback universal
+     * @author Irineu A. Silva
+     * @param <E> tipo do resultado
+     */
     public interface Callback <E> {
        void success(@NonNull E result);
        void error(@NonNull String error);
     }
 
+    /**
+     * Resultado universal
+     * @author Irineu A. Silva
+     * @param <E> tipo do resultado
+     */
     public static class Result <E> {
 
         @Nullable
