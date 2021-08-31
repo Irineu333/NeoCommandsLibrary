@@ -40,7 +40,8 @@ class MainActivity : AppCompatActivity() {
 
         //build
         val gen = File(project, "build/gen")
-        val bytecode = File(project, "build/bin/class")
+        val bin = File(project, "build/bin")
+        val bytecode = File(bin, "class")
         val dex = File(project, "build/bin/dex")
 
         //output
@@ -50,18 +51,57 @@ class MainActivity : AppCompatActivity() {
 
         //utils
         val aapt = AaptUtils("$native/aapt-arm.so")
+        val aapt2 = File("$native/aapt2.so")
         val ecj = EcjUtils("$native/ecj.jar.so")
         val dx = DxUtils("$native/dx.jar.so")
 
         //programs
         val apkSigner = File("$native/apksigner.jar.so")
 
-
         //versions
-
         Log.d(commandDebug, "aapt: " + aapt.version().result!!)
+        Log.d(commandDebug, "aapt2: " + CommandUtils.syncExec(aapt2.path, "version").result)
         Log.d(commandDebug, "dx: " + dx.version().result!!)
         Log.d(commandDebug, "ecj: " + ecj.version().result!!)
+
+
+        val btnCompileAapt2 = findViewById<Button>(R.id.compileAapt2)
+
+        btnCompileAapt2.setOnClickListener {
+
+
+            val alert = NeoUtils.showProgressDialog(
+                this,
+                "Aapt2 : Compilando recursos..."
+            )
+
+            val process = CommandUtils.asyncExec(
+                aapt2.path,
+                "compile",
+                "--dir", res.path,
+                "-o", File(bin, "resources").path
+            )
+
+            StreamUtils.asyncReadProcess(process!!, object : Utils.Callback<String> {
+                override fun success(result: String) {
+                    alert.dismiss()
+                    Toast.makeText(this@MainActivity, "Criando!", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun error(error: String) {
+                    alert.dismiss()
+                    NeoUtils.showDialogError(this@MainActivity, error)
+                }
+            })
+        }
+
+        val linkAapt2 = findViewById<Button>(R.id.linkAapt2)
+
+        linkAapt2.setOnClickListener {
+
+        }
+
+        //processo legacy de criação de apps
 
         val btnCreateClasseR = findViewById<Button>(R.id.createR)
 

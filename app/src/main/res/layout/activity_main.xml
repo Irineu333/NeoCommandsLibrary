@@ -1,15 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="250dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:orientation="vertical">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/compileAapt2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Compile Resources" />
+
+            <Space
+                android:layout_width="16dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AAPT2" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/linkAapt2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Link resources" />
+
+            <Space
+                android:layout_width="16dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AAPT2" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="8dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="8dp" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="wrap_content"
@@ -61,7 +120,7 @@
                     android:id="@+id/compile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Compile" />
+                    android:text="Compile Java" />
 
                 <Space
                     android:layout_width="16dp"
@@ -155,7 +214,7 @@
                 android:id="@+id/signer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Assinar apk" />
+                android:text="Singer apk" />
 
             <Space
                 android:layout_width="16dp"
@@ -170,4 +229,4 @@
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-</FrameLayout>
+</androidx.core.widget.NestedScrollView>
