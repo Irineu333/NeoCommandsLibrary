@@ -56,147 +56,190 @@ class MainActivity : AppCompatActivity() {
         val btnCreateClasseR = findViewById<Button>(R.id.createR)
 
         btnCreateClasseR.setOnClickListener {
-
-            val alert = NeoUtils.showProgressDialog(
-                this,
-                "Aapt : Indexando recursos..."
-            )
-
-            if (!gen.exists()) {
-                gen.mkdirs()
-            }
-
-            val process = aapt.asyncCreateR(
-                gen, res,
-                manifest,
-                framework
-            )
-
-            StreamUtils.asyncReadProcess(process!!, object : Utils.Callback<String> {
-                override fun success(result: String) {
-                    alert.dismiss()
-                    Toast.makeText(this@MainActivity, "Criado!", Toast.LENGTH_SHORT).show()
-                }
-
-                override fun error(error: String) {
-                    alert.dismiss()
-                    NeoUtils.showDialogError(this@MainActivity, error)
-                }
-            })
+            createR(gen, aapt, res, manifest, framework)
         }
 
         val btnCompile = findViewById<Button>(R.id.compile)
         btnCompile.setOnClickListener {
-            val alert = NeoUtils.showProgressDialog(
-                this,
-                "Ecj : Compilando código java..."
-            )
-
-            val process = ecj.asyncCompile(java, gen, framework, bytecode)
-
-            StreamUtils.asyncReadProcess(process!!, object : Utils.Callback<String> {
-                override fun success(result: String) {
-                    alert.dismiss()
-                    Toast.makeText(this@MainActivity, "Compilado!", Toast.LENGTH_SHORT).show()
-                }
-
-                override fun error(error: String) {
-                    alert.dismiss()
-                    NeoUtils.showDialogError(this@MainActivity, error)
-                }
-            })
+            compileJava(ecj, java, gen, framework, bytecode)
         }
 
         val btnGenDex = findViewById<Button>(R.id.generateDex)
         btnGenDex.setOnClickListener {
-            val alert = NeoUtils.showProgressDialog(
-                this,
-                "Dx : Gerando bytecode dex..."
-            )
-
-            if (!dex.exists()) {
-                dex.mkdirs()
-            }
-
-            val process = dx.asyncCreateDex(bytecode, dex)
-
-            StreamUtils.asyncReadProcess(process!!, object : Utils.Callback<String> {
-                override fun success(result: String) {
-                    alert.dismiss()
-                    Toast.makeText(this@MainActivity, "Gerado!", Toast.LENGTH_SHORT).show()
-                }
-
-                override fun error(error: String) {
-                    alert.dismiss()
-                    NeoUtils.showDialogError(this@MainActivity, error)
-                }
-            })
+            genDex(dex, dx, bytecode)
         }
 
         val btnBuildApk = findViewById<Button>(R.id.buildApk)
         btnBuildApk.setOnClickListener {
-            val alert = NeoUtils.showProgressDialog(
-                this,
-                "Aapt : Construindo apk..."
-            )
-
-            if (!output.exists()) {
-                output.mkdirs()
-            }
-
-            val process = aapt.asyncBuildApkUnsigned(
-                1, "1.0",
-                14, 21,
-                res,
-                manifest,
-                framework,
-                dex,
-                unsignedApk
-            )
-
-            StreamUtils.asyncReadProcess(process!!, object : Utils.Callback<String> {
-                override fun success(result: String) {
-                    alert.dismiss()
-                    Toast.makeText(this@MainActivity, "Criando!", Toast.LENGTH_SHORT).show()
-                }
-
-                override fun error(error: String) {
-                    alert.dismiss()
-                    NeoUtils.showDialogError(this@MainActivity, error)
-                }
-            })
+            buildApk(output, aapt, res, manifest, framework, dex, unsignedApk)
         }
 
         val btnSigner = findViewById<Button>(R.id.signer)
         btnSigner.setOnClickListener {
-            val alert = NeoUtils.showProgressDialog(
-                this,
-                "Apk Signer : Assinando apk..."
-            )
-
-            val process = CommandUtils.DALVIK.CP.asyncExec(
-                apkSigner.path, //
-                "net.fornwall.apksigner.Main", //
-                "-p", //
-                "235711", //
-                project.path + "/keys/keystore.jks", //
-                unsignedApk.path, //
-                signedApk.path //
-            )
-
-            StreamUtils.asyncReadProcess(process!!, object : Utils.Callback<String> {
-                override fun success(result: String) {
-                    alert.dismiss()
-                    Toast.makeText(this@MainActivity, "Assinado!", Toast.LENGTH_SHORT).show()
-                }
-
-                override fun error(error: String) {
-                    alert.dismiss()
-                    NeoUtils.showDialogError(this@MainActivity, error)
-                }
-            })
+            signerApk(apkSigner, project, unsignedApk, signedApk)
         }
 
+    }
+
+    private fun createR(
+        gen: File,
+        aapt: AaptUtils,
+        res: File,
+        manifest: File,
+        framework: File
+    ) {
+        val alert = NeoUtils.showProgressDialog(
+            this,
+            "Aapt : Indexando recursos..."
+        )
+
+        if (!gen.exists()) {
+            gen.mkdirs()
+        }
+
+        val process = aapt.asyncCreateR(
+            gen, res,
+            manifest,
+            framework
+        )
+
+        StreamUtils.asyncReadProcess(process!!, object : Utils.Callback<String> {
+            override fun success(result: String) {
+                alert.dismiss()
+                Toast.makeText(this@MainActivity, "Criado!", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun error(error: String) {
+                alert.dismiss()
+                NeoUtils.showDialogError(this@MainActivity, error)
+            }
+        })
+    }
+
+    private fun compileJava(
+        ecj: EcjUtils,
+        java: File,
+        gen: File,
+        framework: File,
+        bytecode: File
+    ) {
+        val alert = NeoUtils.showProgressDialog(
+            this,
+            "Ecj : Compilando código java..."
+        )
+
+        val process = ecj.asyncCompile(java, gen, framework, bytecode)
+
+        StreamUtils.asyncReadProcess(process!!, object : Utils.Callback<String> {
+            override fun success(result: String) {
+                alert.dismiss()
+                Toast.makeText(this@MainActivity, "Compilado!", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun error(error: String) {
+                alert.dismiss()
+                NeoUtils.showDialogError(this@MainActivity, error)
+            }
+        })
+    }
+
+    private fun genDex(dex: File, dx: DxUtils, bytecode: File) {
+        val alert = NeoUtils.showProgressDialog(
+            this,
+            "Dx : Gerando bytecode dex..."
+        )
+
+        if (!dex.exists()) {
+            dex.mkdirs()
+        }
+
+        val process = dx.asyncCreateDex(bytecode, dex)
+
+        StreamUtils.asyncReadProcess(process!!, object : Utils.Callback<String> {
+            override fun success(result: String) {
+                alert.dismiss()
+                Toast.makeText(this@MainActivity, "Gerado!", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun error(error: String) {
+                alert.dismiss()
+                NeoUtils.showDialogError(this@MainActivity, error)
+            }
+        })
+    }
+
+    private fun signerApk(
+        apkSigner: File,
+        project: File,
+        unsignedApk: File,
+        signedApk: File
+    ) {
+        val alert = NeoUtils.showProgressDialog(
+            this,
+            "Apk Signer : Assinando apk..."
+        )
+
+        val process = CommandUtils.DALVIK.CP.asyncExec(
+            apkSigner.path, //
+            "net.fornwall.apksigner.Main", //
+            "-p", "235711", //password
+            project.path + "/keys/keystore.jks", //
+            unsignedApk.path, //
+            signedApk.path //
+        )
+
+        StreamUtils.asyncReadProcess(process!!, object : Utils.Callback<String> {
+            override fun success(result: String) {
+                alert.dismiss()
+                Toast.makeText(this@MainActivity, "Assinado!", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun error(error: String) {
+                alert.dismiss()
+                NeoUtils.showDialogError(this@MainActivity, error)
+            }
+        })
+    }
+
+    private fun buildApk(
+        output: File,
+        aapt: AaptUtils,
+        res: File,
+        manifest: File,
+        framework: File,
+        dex: File,
+        unsignedApk: File
+    ) {
+        val alert = NeoUtils.showProgressDialog(
+            this,
+            "Aapt : Construindo apk..."
+        )
+
+        if (!output.exists()) {
+            output.mkdirs()
+        }
+
+        val process = aapt.asyncBuildApkUnsigned(
+            1, "1.0",
+            14, 21,
+            res,
+            manifest,
+            framework,
+            dex,
+            unsignedApk
+        )
+
+        StreamUtils.asyncReadProcess(process!!, object : Utils.Callback<String> {
+            override fun success(result: String) {
+                alert.dismiss()
+                Toast.makeText(this@MainActivity, "Criando!", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun error(error: String) {
+                alert.dismiss()
+                NeoUtils.showDialogError(this@MainActivity, error)
+            }
+        })
     }
 
 
