@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         Log.d(commandDebug, File(native).listFiles()?.joinToString("\n", "files: \n") { it.name + " " + it.permissions() } ?: "Nenhum arquivo")
 
         val root = File(Environment.getExternalStorageDirectory(), "NeoIDE")
-        val framework = File(root, "framework/android.jar")
+        val platform = File(root, "android-platforms/android-sdk-30.jar")
 
         //project
         val project = File(root, "Project")
@@ -56,15 +56,22 @@ class MainActivity : AppCompatActivity() {
         //programs
         val apkSigner = File("$native/apksigner.jar.so")
 
+
+        //versions
+
+        Log.d(commandDebug, "aapt: " + aapt.version().result!!)
+        Log.d(commandDebug, "dx: " + dx.version().result!!)
+        Log.d(commandDebug, "ecj: " + ecj.version().result!!)
+
         val btnCreateClasseR = findViewById<Button>(R.id.createR)
 
         btnCreateClasseR.setOnClickListener {
-            createR(gen, aapt, res, manifest, framework)
+            createR(gen, aapt, res, manifest, platform)
         }
 
         val btnCompile = findViewById<Button>(R.id.compile)
         btnCompile.setOnClickListener {
-            compileJava(ecj, java, gen, framework, bytecode)
+            compileJava(ecj, java, gen, platform, bytecode)
         }
 
         val btnGenDex = findViewById<Button>(R.id.generateDex)
@@ -74,7 +81,7 @@ class MainActivity : AppCompatActivity() {
 
         val btnBuildApk = findViewById<Button>(R.id.buildApk)
         btnBuildApk.setOnClickListener {
-            buildApk(output, aapt, res, manifest, framework, dex, unsignedApk)
+            buildApk(output, aapt, res, manifest, platform, dex, unsignedApk)
         }
 
         val btnSigner = findViewById<Button>(R.id.signer)
@@ -224,7 +231,7 @@ class MainActivity : AppCompatActivity() {
 
         val process = aapt.asyncBuildApkUnsigned(
             1, "1.0",
-            14, 21,
+            21, 30,
             res,
             manifest,
             framework,
