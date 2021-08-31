@@ -50,13 +50,16 @@ class MainActivity : AppCompatActivity() {
         val signedApk = File(output, "signed.apk")
 
         //utils
-        val aapt = AaptUtils("$native/aapt-arm.so")
-        val aapt2 = File("$native/aapt2.so")
-        val ecj = EcjUtils("$native/ecj.jar.so")
-        val dx = DxUtils("$native/dx.jar.so")
+        val aapt = AaptUtils("$native/aapt-arm.so") //is a program
+        val ecj = EcjUtils("$native/ecj.jar.so") //ia a lib
+        val dx = DxUtils("$native/dx.jar.so") //is a lib
 
         //programs
+        val aapt2 = File("$native/aapt2-arm.so")
+
+        //libs
         val apkSigner = File("$native/apksigner.jar.so")
+        val d8 = File("$native/d8.jar.so")
 
         //versions
         Log.d(commandDebug, "aapt: " + aapt.version().result!!)
@@ -64,28 +67,57 @@ class MainActivity : AppCompatActivity() {
         Log.d(commandDebug, "dx: " + dx.version().result!!)
         Log.d(commandDebug, "ecj: " + ecj.version().result!!)
 
+//        CommandUtils.DALVIK.CP.syncExec(d8.path, ).apply {
+//            if (isSuccess) {
+//                Log.d(commandDebug, result!!)
+//            } else {
+//                Log.e(commandDebug, error!!)
+//            }
+//        }
+//
+
+        //helps
+
+        val aapt2Help = findViewById<Button>(R.id.aapt2Help)
+
+        aapt2Help.setOnClickListener {
+            CommandUtils.syncExec(
+                aapt2.path,
+                "--help"
+            ).apply {
+                if (isSuccess) {
+                    NeoUtils.showMessage(this@MainActivity, result!!)
+                } else {
+                    NeoUtils.showDialogError(this@MainActivity, error!!)
+                }
+            }
+        }
+
+        //novas ferramentas
+
 
         val btnCompileAapt2 = findViewById<Button>(R.id.compileAapt2)
 
         btnCompileAapt2.setOnClickListener {
-
 
             val alert = NeoUtils.showProgressDialog(
                 this,
                 "Aapt2 : Compilando recursos..."
             )
 
+            File(bin.path + "/compiled/res").mkdirs()
+
             val process = CommandUtils.asyncExec(
                 aapt2.path,
                 "compile",
-                "--dir", res.path,
-                "-o", File(bin, "resources").path
+                "--dir", res.path, //directory find resources (opcional)
+                "-o", bin.path + "/compiled/res" //output compiled resources
             )
 
             StreamUtils.asyncReadProcess(process!!, object : Utils.Callback<String> {
                 override fun success(result: String) {
                     alert.dismiss()
-                    Toast.makeText(this@MainActivity, "Criando!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MainActivity, "Compilado!", Toast.LENGTH_SHORT).show()
                 }
 
                 override fun error(error: String) {
@@ -98,7 +130,42 @@ class MainActivity : AppCompatActivity() {
         val linkAapt2 = findViewById<Button>(R.id.linkAapt2)
 
         linkAapt2.setOnClickListener {
+            val alert = NeoUtils.showProgressDialog(
+                this,
+                "Aapt2 : Linkando recursos..."
+            )
 
+            if (!output.exists()){
+                output.mkdirs()
+            }
+
+            val args = mutableListOf(
+                aapt2.path,
+                "link",
+                "-I", platform.path, //platform
+                "--manifest", manifest.path, //manifest
+                "-o", unsignedApk.path, //output apk
+                "--java", gen.path, //directory R.java (opcional)
+                "--min-sdk-version", "21", //opcional
+                "--target-sdk-version", "30", //opcional
+                "--version-code", "1", //opcional
+                "--compile-sdk-version-name", "30", //opcional
+            ).apply {
+                addAll(File(bin.path + "/compiled/res").listFiles()!!.map { it.path })
+            }
+            val process = CommandUtils.asyncExec(args.joinToString(" ") { it })
+
+            StreamUtils.asyncReadProcess(process!!, object : Utils.Callback<String> {
+                override fun success(result: String) {
+                    alert.dismiss()
+                    Toast.makeText(this@MainActivity, "Linkado!", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun error(error: String) {
+                    alert.dismiss()
+                    NeoUtils.showDialogError(this@MainActivity, error)
+                }
+            })
         }
 
         //processo legacy de criação de apps

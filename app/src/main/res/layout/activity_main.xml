@@ -16,6 +16,29 @@
             android:layout_height="wrap_content">
 
             <Button
+                android:layout_margin="8dp"
+                android:id="@+id/aapt2Help"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Aapt2 Help" />
+
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="8dp" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <Button
                 android:id="@+id/compileAapt2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

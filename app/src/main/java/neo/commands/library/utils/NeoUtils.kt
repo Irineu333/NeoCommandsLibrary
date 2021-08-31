@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.setPadding
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
+import neo.commands.library.MainActivity
 import neo.commands.library.R
 
 class NeoUtils {
@@ -40,6 +41,13 @@ class NeoUtils {
             AlertDialog.Builder(context).apply {
                 setTitle("Ocorreu um erro")
                 setMessage(error)
+            }.show()
+        }
+
+        fun showMessage(context: Context, result: String) {
+            AlertDialog.Builder(context).apply {
+                setTitle("Help")
+                setMessage(result)
             }.show()
         }
     }
