@@ -2,6 +2,7 @@ package neo.commands.library
 
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -22,6 +23,8 @@ class MainActivity : AppCompatActivity() {
 
         val commandDebug = "commandDebug"
         val native = applicationInfo.nativeLibraryDir
+
+        Log.d(commandDebug, File(native).listFiles()?.joinToString("\n", "files: \n") { it.name + " " + it.permissions() } ?: "Nenhum arquivo")
 
         val root = File(Environment.getExternalStorageDirectory(), "NeoIDE")
         val framework = File(root, "framework/android.jar")
@@ -246,4 +249,11 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private val TAG = this::class.simpleName
     }
+}
+
+private fun File.permissions(): String {
+    val x = if (canExecute()) "x" else "-"
+    val r = if (canRead()) "r" else "-"
+    val w = if (canWrite()) "w" else "-"
+    return x + r + w
 }
